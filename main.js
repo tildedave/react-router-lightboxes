@@ -33,8 +33,16 @@ var RoutedLightbox = React.createClass({
     }
 });
 
+var EmptyHandler = React.createClass({
+    render: function() {
+        return null;
+    }
+});
+
 var routes = (
-    <Router.Route name="lightbox" path="/" handler={RoutedLightbox} />
+    <Router.Route name="lightbox" path="/" handler={RoutedLightbox}>
+        <Router.NotFoundRoute handler={EmptyHandler} />
+    </Router.Route>
 );
 
 var div = document.createElement('div');
