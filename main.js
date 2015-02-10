@@ -1,12 +1,24 @@
 var React = require('react');
 var Router = require('react-router');
 
+var DemoLightbox = React.createClass({
+    render: function() {
+        return <div>I'm a lightbox!</div>;
+    }
+});
+
+var lightboxes = {
+    'demoLightbox': DemoLightbox
+};
+
 var RoutedLightbox = React.createClass({
 
     mixins: [Router.State],
 
     render: function() {
-        if (this.isActive('no-lightbox')) {
+        var query = this.getQuery();
+
+        if (!query['lightbox'] || !lightboxes[query['lightbox']]) {
             return null;
         }
 
@@ -14,34 +26,19 @@ var RoutedLightbox = React.createClass({
             <div>
                 <div className="background" />
                 <div className="lightbox">
-                    <Router.RouteHandler />
+                    {React.createElement(lightboxes[query['lightbox']])}
                 </div>
             </div>
         );
     }
 });
 
-var NoLightbox = React.createClass({
-    render: function() {
-        return null;
-    }
-});
-
-var DemoLightbox = React.createClass({
-    render: function() {
-        return <div>I'm a lightbox!</div>;
-    }
-});
-
 var routes = (
-    <Router.Route name="lightbox" handler={RoutedLightbox}>
-        <Router.Route name="no-lightbox" path="/" handler={NoLightbox} />
-        <Router.Route name="demo-lightbox" path="/demoLightbox" handler={DemoLightbox} />
-    </Router.Route>
+    <Router.Route name="lightbox" path="/" handler={RoutedLightbox} />
 );
 
 var div = document.createElement('div');
-Router.run(routes, Router.HashLocation, function(Handler) {
+Router.run(routes, Router.HistoryLocation, function(Handler) {
     React.render(<Handler />, div);
 });
 document.body.appendChild(div);
